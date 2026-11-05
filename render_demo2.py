@@ -284,26 +284,19 @@ CHORDS = [  # Am, F, C, G — soft pad, 4 s each
 
 
 def make_bgm(total_s: float) -> Path:
-    chord_files = []
-    for i, freqs in enumerate(CHORDS):
-        cf = WORK / f"chord{i}.wav"
-        inputs, mix = [], []
-        for j, fq in enumerate(freqs):
-            inputs += ["-f", "lavfi", "-i", f"sine=frequency={fq}:duration=4.2"]
-            mix.append(f"[{j}:a]")
-        fc = ("".join(mix) + "amix=inputs=3:normalize=0,"
-              "afade=t=in:st=0:d=0.9,afade=t=out:st=3.3:d=0.9,lowpass=f=1100,volume=0.9[a]")
-        subprocess.run(["ffmpeg", "-y", "-v", "error", *inputs, "-filter_complex", fc,
-                        "-map", "[a]", str(cf)], check=True)
-        chord_files.append(cf)
-    concat = WORK / "chords.txt"
-    concat.write_text("".join(f"file '{c}'\n" for c in chord_files))
+    """Compose the musical BGM (pluck melody + bass + pads) via music_bgm.py.
+
+    The earlier sine-pad drone measured -39.9 dB mean (inaudible) at v2 and
+    -27.3 dB at v3; the composed loop lands around -16 dB mean and actually
+    sounds like music. System python3 carries numpy; the project venv doesn't
+    need it for this step.
+    """
     bgm = WORK / "bgm.wav"
     subprocess.run(
-        ["ffmpeg", "-y", "-v", "error", "-stream_loop", "-1", "-f", "concat", "-safe", "0",
-         "-i", str(concat), "-t", f"{total_s:.2f}", "-af",
-         f"volume=0.38,afade=t=in:st=0:d=2,afade=t=out:st={total_s - 3:.2f}:d=3",
-         str(bgm)], check=True)
+        ["python3", str(Path(__file__).parent / "music_bgm.py"),
+         f"{total_s:.0f}", str(bgm)],
+        check=True,
+    )
     return bgm
 
 
