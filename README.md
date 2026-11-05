@@ -130,7 +130,7 @@ the verdict?" correctly from thread history alone.
 ## Findings
 
 Building-block notes, rough edges, and feedback for the OpenMinion team are
-in [FINDINGS.md](FINDINGS.md) — 12 numbered findings from building and
+in [FINDINGS.md](FINDINGS.md) — 13 numbered findings from building and
 running MintLens, including the ones referenced above.
 
 ## Limitations (honest list)

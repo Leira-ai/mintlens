@@ -276,7 +276,7 @@ def build_brief(address: str, use_cache: bool = True) -> dict:
     }
     if not contract.get("has_code"):
         brief["verdict"] = "Hindari"
-        brief["reasons"] = ["Alamat tidak memiliki bytecode kontrak di BSC (EOA atau alamat salah)."]
+        brief["reasons"] = ["Address has no contract bytecode on BSC (EOA or wrong address)."]
         cache[key] = {"ts": time.time(), "brief": brief}
         _save_cache(cache)
         return brief
@@ -291,31 +291,31 @@ def build_brief(address: str, use_cache: bool = True) -> dict:
     reasons: list[str] = []
     if free_signal:
         reasons.append(
-            "Simulasi value-0 dari alamat segar lolos untuk: "
+            "Value-0 simulation from a fresh address passed for: "
             + ", ".join(brief["free_paths"]["methods_ok"])
-            + " (sinyal jalur gratis — bukan bukti; gerbang penuh tetap wajib)."
+            + " (free-path signal — not proof; the full gate still applies)."
         )
         if brief["free_paths"].get("operator_wallet_methods_ok"):
-            reasons.append("Wallet operator masih bisa memakai jalur itu (simulasi lolos).")
+            reasons.append("The operator wallet can still use that path (simulation passed).")
         else:
             reasons.append(
-                "Wallet operator TIDAK lolos simulasi — jatah gratisnya kemungkinan sudah terpakai atau terblokir syarat lain."
+                "The operator wallet did NOT pass simulation — its free quota is likely spent or blocked by another condition."
             )
     else:
         reasons.append(
-            "Tidak ada jalur mint/claim gratis yang lolos simulasi value-0 dari alamat uji — "
-            "bisa berarti memang tidak ada jalur gratis, jatah global sudah habis, atau jalurnya "
-            "ter-gate identitas (mis. wajib Agent ID) sehingga simulasi dari alamat biasa selalu revert."
+            "No free mint/claim path passed value-0 simulation from the test address — "
+            "that can mean there is no free path, the global quota is exhausted, or the path is "
+            "identity-gated (e.g. requires an Agent ID) so simulations from a plain address always revert."
         )
     reasons.append(
-        "Kontrak terverifikasi di Sourcify." if verified else "Kontrak TIDAK terverifikasi di Sourcify."
+        "Contract is verified on Sourcify." if verified else "Contract is NOT verified on Sourcify."
     )
     if has_market:
         reasons.append(
-            f"Ada pasar DEX (likuiditas ${brief['market'].get('liquidity_usd')}, harga ${brief['market'].get('price_usd')})."
+            f"There is a DEX market (liquidity ${brief['market'].get('liquidity_usd')}, price ${brief['market'].get('price_usd')})."
         )
     else:
-        reasons.append("Belum ada pair DEX di BSC (DexScreener).")
+        reasons.append("No DEX pair on BSC yet (DexScreener).")
 
     if free_signal and verified:
         verdict = "Layak"

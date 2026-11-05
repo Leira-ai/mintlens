@@ -120,6 +120,20 @@ Config note: default turn timeouts (chat 90 s / API 45 s) were too tight for a
 slow egress path + a reasoning model; raised in `.openminion/agents.json`
 (chat 300 s, API 180 s, brain 600 s).
 
+13. **A thread can be poisoned by its own blocked replies.** After several
+    freshness-verifier blocks landed in the `mintlens-main` thread history,
+    later research turns on that thread stopped producing qualifying evidence
+    at all (the model pattern-matched its own blocked replies and skipped the
+    tool call), failing with both "missing live-data" and "missing
+    exact-date" — while the identical prompt on a fresh thread passed
+    immediately, with the same tools and model. Two mitigations worked:
+    deterministic routing (force `research_contract` whenever the prompt
+    contains a contract address) and starting the demo pair on a clean
+    thread. Related: a single fresh research brief takes ~70 s of wall time
+    on a slow network (16+ RPC/API calls), so slow tools plus long threads
+    make verifier outcomes flaky in ways that look like model failure.
+    Verifier diagnostics that name *which* action was evaluated would help.
+
 ## Building Blocks Tested (summary)
 
 | Building block | How MintLens used it | Result |

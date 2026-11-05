@@ -16,6 +16,7 @@ Usage:
 
 from __future__ import annotations
 
+import re
 import sys
 import time
 
@@ -28,7 +29,8 @@ SYSTEM_TASK = (
     "For any contract address the user gives you, call research_contract and base your "
     "answer strictly on its output. Present: identity, Sourcify verification, free-mint "
     "path signal, market status, and the verdict with its reasons. Never invent data, "
-    "never suggest sending a transaction yourself — you are read-only."
+    "never suggest sending a transaction yourself — you are read-only. "
+    "Always answer in English."
 )
 
 
@@ -64,13 +66,19 @@ def main() -> None:
     prompt = " ".join(sys.argv[1:]) or (
         "Research this BSC contract: 0x8b8e59c014eb3e229e043ae8f3b0d7e201d21db0"
     )
+    # Deterministic routing: a prompt carrying a contract address is a
+    # research request, so force the umbrella research tool — small models
+    # otherwise sometimes skip it or pick a granular tool, and the runtime's
+    # freshness verifier then (correctly) blocks the ungrounded answer.
+    forced = ["research_contract"] if re.search(r"0x[0-9a-fA-F]{40}", prompt) else None
     with Agent(
         tools=[research_contract, check_verification, check_market],
         session_id="mintlens",
+        forced_tools=forced,
     ) as agent:
         result = agent.run(
             SYSTEM_TASK + "\n\nUser request: " + prompt,
-            thread_id="mintlens-main",
+            thread_id="mintlens-en",
         )
         print(result.text if hasattr(result, "text") else result)
 

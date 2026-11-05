@@ -171,110 +171,107 @@ def build() -> list[float]:
     # 1 — intro card
     durs.append(card_segment(0, "MintLens — sneak peek", "",
         [("MintLens", ACCENT, f_big),
-         ("Agen riset mint gratis BSC — hanya membaca data.", FG, f_body),
+         ("A read-only research agent for BSC free mints.", FG, f_body),
          ("", FG, f_body),
-         ("Di video ini: cara akses -> cara pakai -> hasilnya.", FG, f_body),
-         ("Dibangun di atas OpenMinion SDK · Cortensor Hackathon #5", DIM, f_body)], 7))
+         ("In this video: access -> usage -> results.", FG, f_body),
+         ("Built on the OpenMinion SDK · Cortensor Hackathon #5", DIM, f_body)], 7))
 
     # 2 — access / setup (terminal)
-    durs.append(term_segment(1, "1 · Cara akses — setup provider",
-        [(0, "Aksesnya cukup konfigurasi: provider model diatur di .openminion/agents.json"),
-         (4, "API key disimpan di luar repo, lewat environment — tidak pernah ter-commit")],
+    durs.append(term_segment(1, "1 · Access — provider setup",
+        [(0, "Access is just configuration: the model provider lives in .openminion/agents.json"),
+         (4, "The API key stays outside the repo, in an environment variable — never committed")],
         [("cmd", "cd mintlens && ls"),
          ("out", ("agent.py   mintlens.py   README.md   FINDINGS.md", FG)),
          ("cmd", "openminion --version"),
          ("out", ("0.1.18", FG)),
          ("wait", 0.8),
          ("cmd", "grep -E 'provider|model' .openminion/agents.json"),
-         ("out", ('"provider": "openai"  -> endpoint resmi Gemini', FG)),
+         ("out", ('"provider": "openai"  -> Gemini official endpoint', FG)),
          ("out", ('"model": "gemini-3.1-flash-lite"', FG)),
          ("out", ('"api_key_env": "OPENAI_API_KEY"', DIM)),
          ("wait", 1.2),
          ("cmd", "export OPENAI_API_KEY=**********"),
-         ("out", ("siap. dua cara pakai: CLI deterministik, atau agen AI.", ACCENT))]))
+         ("out", ("ready. two ways to use it: deterministic CLI, or the AI agent.", ACCENT))]))
 
     # 3 — CLI brief (terminal)
-    durs.append(term_segment(2, "2 · Cara pakai — brief CLI (tanpa model)",
-        [(0, "Mode CLI: lima cek deterministik, tanpa AI — hasilnya selalu sama"),
-         (6, "Verdict dari aturan kode: Layak, Pantau, atau Hindari")],
+    durs.append(term_segment(2, "2 · Usage — CLI brief (no model)",
+        [(0, "CLI mode: five deterministic checks, no AI — the same result every time"),
+         (6, "The verdict comes from code rules: Layak (worth it), Pantau (monitor), Hindari (avoid)")],
         [("cmd", f"python mintlens.py brief {ADDR}"),
-         ("out", ("{ brief untuk 0x8b8e59c0...1db0", DIM)),
+         ("out", ("{ brief for 0x8b8e59c0...1db0", DIM)),
          ("out", ("  contract    : Kitebots (KITE), supply 668", FG)),
          ("out", ("                  owner 0x4e9b...08dba", FG)),
          ("out", ("  verification: Sourcify exact_match", FG)),
-         ("out", ("  free_paths  : 8 metode x 2 sudut pandang", FG)),
+         ("out", ("  free_paths  : 8 methods x 2 perspectives", FG)),
          ("out", ("     freeMint()   fresh=revert  operator=revert", DIM)),
          ("out", ("     claimFree()  fresh=revert  operator=revert", DIM)),
-         ("out", ("  market      : tidak ada pair DEX", FG)),
+         ("out", ("  market      : no DEX pair", FG)),
          ("out", ('  verdict     : "Pantau" }', ACCENT)),
          ("wait", 1.5)]))
 
     # 4 — agent run (terminal)
-    durs.append(term_segment(3, "3 · Cara pakai — agen AI (model beneran)",
-        [(0, "Mode agen: AI memanggil tool risetnya sendiri, lalu merangkum"),
-         (4, "Hasil agen sama dengan brief CLI — verdict Pantau, tanpa karangan")],
+    durs.append(term_segment(3, "3 · Usage — AI agent (real model)",
+        [(0, "Agent mode: the AI calls its own research tool, then summarizes"),
+         (4, "The agent's answer matches the CLI brief — verdict Pantau, nothing invented")],
         [("cmd", f'python agent.py "Research this BSC contract: {ADDR_SHORT}"'),
          ("wait", 0.6),
-         ("out", ("openminion: Hasil riset untuk 0x8b8e...1db0:", FG)),
-         ("out", (" * Identity : Kitebots (KITE), supply 668", FG)),
-         ("out", (" * Sourcify : Terverifikasi (Exact Match)", FG)),
-         ("out", (" * Jalur gratis: tidak terdeteksi — semua", FG)),
-         ("out", ("   simulasi value-0 revert dari alamat uji", FG)),
-         ("out", (" * Market   : belum ada pair DEX di BSC", FG)),
-         ("out", (" * Verdict  : Pantau", ACCENT)),
+         ("out", ("openminion: Findings for 0x8b8e...1db0:", FG)),
+         ("out", (" * Identity : Kitebots (KITE)", FG)),
+         ("out", (" * Sourcify : Verified (Exact Match)", FG)),
+         ("out", (" * Free-mint path: Negative — all probed", FG)),
+         ("out", ("   mint/claim methods reverted in simulation", FG)),
+         ("out", (" * Market   : no DEX pair detected on BSC", FG)),
+         ("out", (" * Verdict  : Pantau (Monitor)", ACCENT)),
          ("wait", 1.5),
-         ("out", ("(output asli run 6 Nov 2026, dipersingkat)", DIM))], out_hold=4))
+         ("out", ("(actual output, 6 Nov 2026 run, excerpted)", DIM))], out_hold=4))
 
     # 5 — verdict card
-    durs.append(card_segment(4, "4 · Hasilnya — cara membaca verdict",
-        "Pantau = ada sinyal positif (kode terverifikasi), tapi jalur gratis belum terbukti terbuka",
-        [("Layak    jalur gratis lolos simulasi + kode terverifikasi", GREEN, f_body),
-         ("Pantau   ada sinyal positif, bukti belum lengkap", AMBER, f_bodyb),
-         ("Hindari  tidak ada sinyal positif / bukan kontrak", RED, f_body),
+    durs.append(card_segment(4, "4 · The result — reading the verdict",
+        "Pantau (Monitor) = a positive signal exists (verified code), but no free path is proven open",
+        [("Layak (worth it)   free path passes + verified code", GREEN, f_body),
+         ("Pantau (monitor)   positive signal, evidence incomplete", AMBER, f_bodyb),
+         ("Hindari (avoid)    no positive signal / not a contract", RED, f_body),
          ("", FG, f_body),
-         ("Kitebots -> Pantau.", FG, f_body),
-         ("Kemungkinan ter-gate Agent ID: dari alamat biasa", DIM, f_body),
-         ('selalu revert — dilaporkan "tidak terdeteksi",', DIM, f_body),
-         ('bukan "tidak ada".', DIM, f_body)], 12))
+         ("Kitebots -> Pantau (Monitor).", FG, f_body),
+         ("Possibly Agent-ID gated: from a plain address it", DIM, f_body),
+         ('always reverts — reported as "not detected",', DIM, f_body),
+         ('never "does not exist".', DIM, f_body)], 12))
 
     # 6 — thread memory (terminal)
-    durs.append(term_segment(5, "5 · Sesi agen mengingat",
-        [(0, "Proses baru, sesi yang sama: agen mengingat penelitian sebelumnya"),
-         (3, "Kuncinya thread_id eksplisit — session_id saja tidak cukup (temuan #10)")],
+    durs.append(term_segment(5, "5 · The agent remembers",
+        [(0, "New process, same thread: the agent recalls the previous research"),
+         (3, "The key is an explicit thread_id — session_id alone is not enough (finding #10)")],
         [("cmd", 'python agent.py "Which contract did I ask you to'),
          ("out", ('   research before, and what was the verdict?"', GREEN)),
          ("wait", 0.6),
-         ("out", ("openminion: Anda meminta saya meneliti", FG)),
-         ("out", ("0x8b8e59c0...1db0. Verdict-nya: Pantau.", FG)),
-         ("out", ("Alasannya: tidak ada jalur mint/claim gratis", FG)),
-         ("out", ("yang lolos simulasi, belum ada pair DEX, dan", FG)),
-         ("out", ("akses mint mungkin dibatasi syarat khusus", FG)),
-         ("out", ("meski kontrak terverifikasi di Sourcify.", FG)),
+         ("out", ("openminion: In our previous interaction, you", FG)),
+         ("out", ("asked me to research the BSC contract", FG)),
+         ("out", ("0x8b8e59c0...1db0.", FG)),
+         ("out", ('The verdict I gave was "Pantau" (Monitor).', ACCENT)),
          ("wait", 1.5),
-         ("out", ("(output asli run 6 Nov 2026, dipersingkat)", DIM))], out_hold=4))
+         ("out", ("(actual output, 6 Nov 2026 run, excerpted)", DIM))], out_hold=4))
 
     # 7 — behind the scenes card
-    durs.append(card_segment(6, "6 · Di balik layar",
-        "12 temuan SDK dicatat di FINDINGS.md — bahan kriteria Building Blocks (25%)",
-        [("Building blocks OpenMinion yang dipakai:", FG, f_bodyb),
-         (" * Agent facade + @tool (3 tool hanya-baca)", FG, f_body),
+    durs.append(card_segment(6, "6 · Behind the scenes",
+        "12 SDK findings recorded in FINDINGS.md — material for the Building Blocks criterion (25%)",
+        [("OpenMinion building blocks used:", FG, f_bodyb),
+         (" * Agent facade + @tool (3 read-only tools)", FG, f_body),
          (' * Policy: min_scope="READ_ONLY", idempotent', FG, f_body),
-         (" * Provider pluggable (echo -> Gemini)", FG, f_body),
-         (" * Sesi thread + bukti bertanggal observed_at", FG, f_body),
+         (" * Pluggable providers (echo -> Gemini)", FG, f_body),
+         (" * Thread sessions + observed_at dated evidence", FG, f_body),
          ("", FG, f_body),
-         ("Sengaja TIDAK diaktifkan: modul tanda tangan", DIM, f_body),
-         ("blockchain dan SSH. MintLens murni membaca.", DIM, f_body)], 12))
+         ("Deliberately NOT enabled: blockchain signing", DIM, f_body),
+         ("and SSH modules. MintLens only reads.", DIM, f_body)], 12))
 
     # 8 — closing card
     durs.append(card_segment(7, "MintLens",
-        "Riset dulu, mutusin kemudian.",
+        "Research first, decide later.",
         [("MintLens", ACCENT, f_big),
          ("Read-only. Deterministic. Grounded.", FG, f_body),
-         ("Tidak ada kunci, tidak ada tanda tangan,", FG, f_body),
-         ("tidak ada transaksi.", FG, f_body),
+         ("No keys, no signing, no transactions.", FG, f_body),
          ("", FG, f_body),
-         ("Kode + README + temuan lengkap: repo MintLens", DIM, f_body),
-         ("Cortensor Hackathon #5 — terima kasih.", DIM, f_body)], 7))
+         ("Full code + README + findings: the MintLens repo", DIM, f_body),
+         ("Cortensor Hackathon #5 — thank you.", DIM, f_body)], 7))
     return durs
 
 
@@ -295,7 +292,7 @@ def make_bgm(total_s: float) -> Path:
             inputs += ["-f", "lavfi", "-i", f"sine=frequency={fq}:duration=4.2"]
             mix.append(f"[{j}:a]")
         fc = ("".join(mix) + "amix=inputs=3:normalize=0,"
-              "afade=t=in:st=0:d=0.9,afade=t=out:st=3.3:d=0.9,lowpass=f=750,volume=0.5[a]")
+              "afade=t=in:st=0:d=0.9,afade=t=out:st=3.3:d=0.9,lowpass=f=1100,volume=0.9[a]")
         subprocess.run(["ffmpeg", "-y", "-v", "error", *inputs, "-filter_complex", fc,
                         "-map", "[a]", str(cf)], check=True)
         chord_files.append(cf)
@@ -305,7 +302,7 @@ def make_bgm(total_s: float) -> Path:
     subprocess.run(
         ["ffmpeg", "-y", "-v", "error", "-stream_loop", "-1", "-f", "concat", "-safe", "0",
          "-i", str(concat), "-t", f"{total_s:.2f}", "-af",
-         f"volume=0.16,afade=t=in:st=0:d=2,afade=t=out:st={total_s - 3:.2f}:d=3",
+         f"volume=0.38,afade=t=in:st=0:d=2,afade=t=out:st={total_s - 3:.2f}:d=3",
          str(bgm)], check=True)
     return bgm
 
