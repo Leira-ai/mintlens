@@ -1,0 +1,7 @@
+# Local environment and secrets — never commit
+.venv/
+.openminion/
+.mintlens_cache.json
+__pycache__/
+*.key
+.env
