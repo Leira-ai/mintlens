@@ -1,0 +1,202 @@
+MintLens batch — 3 address(es), 1 error(s) (observed_at 2026-11-06T07:20:33Z)
+#   Address                                      Name                   Symbol   Verified  Free path  Verdict
+1   0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0   Moth Club              MOTH     yes       yes        Layak
+2   0x8b8e59c014eb3e229e043ae8f3b0d7e201d21db0   Kitebots               KITE     yes       no         Pantau
+3   0x123                                        —                      —        —         —          ERROR
+    error: RuntimeError: all RPCs failed for eth_getCode: {'code': -32602, 'message': 'invalid argument 0: json: cannot unmarshal hex string of odd length into Go value of type common.Address'}
+
+--- full briefs (JSON) ---
+{
+  "count": 3,
+  "observed_at": "2026-11-06T07:20:33Z",
+  "briefs": [
+    {
+      "address": "0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0",
+      "checked_at": "2026-11-06T07:16:21Z",
+      "observed_at": "2026-11-06T07:16:21Z",
+      "contract": {
+        "has_code": true,
+        "code_bytes": 7398,
+        "name": "Moth Club",
+        "symbol": "MOTH",
+        "decimals": null,
+        "total_supply_raw": 408,
+        "owner": "0x293fc9e12e5db954aad233f659284f5fb5c970be"
+      },
+      "from_cache": true,
+      "verification": {
+        "verified": true,
+        "match": "exact_match",
+        "name": "MothClub",
+        "verified_at": "2026-11-05T10:17:21Z"
+      },
+      "market": {
+        "has_market": false
+      },
+      "free_paths": {
+        "has_free_path_signal": true,
+        "methods_ok": [
+          "mint(uint256)=1"
+        ],
+        "operator_wallet_methods_ok": [],
+        "probes": [
+          {
+            "method": "freeMint()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "freeMint(uint256)=1",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "mint(uint256)=1",
+            "fresh_wallet": "ok",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "claimFree()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "claimFree(uint256)=1",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "claim()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "openFree()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "mintFree(uint256,address)=(1,zero)",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          }
+        ]
+      },
+      "verdict": "Layak",
+      "reasons": [
+        "Value-0 simulation from a fresh address passed for: mint(uint256)=1 (free-path signal \u2014 not proof; the full gate still applies).",
+        "The operator wallet did NOT pass simulation \u2014 its free quota is likely spent or blocked by another condition.",
+        "Contract is verified on Sourcify.",
+        "No DEX pair on BSC yet (DexScreener)."
+      ]
+    },
+    {
+      "address": "0x8b8e59c014eb3e229e043ae8f3b0d7e201d21db0",
+      "checked_at": "2026-11-06T07:19:53Z",
+      "observed_at": "2026-11-06T07:19:53Z",
+      "contract": {
+        "has_code": true,
+        "code_bytes": 20243,
+        "name": "Kitebots",
+        "symbol": "KITE",
+        "decimals": null,
+        "total_supply_raw": 766,
+        "owner": "0x4e9b1d076fda3605ad63f81a94a8693342a08dba"
+      },
+      "from_cache": false,
+      "verification": {
+        "verified": true,
+        "match": "exact_match",
+        "name": "Kitebots",
+        "verified_at": "2026-11-05T11:02:31Z"
+      },
+      "market": {
+        "has_market": false
+      },
+      "free_paths": {
+        "has_free_path_signal": false,
+        "methods_ok": [],
+        "operator_wallet_methods_ok": [],
+        "probes": [
+          {
+            "method": "freeMint()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "freeMint(uint256)=1",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "mint(uint256)=1",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "claimFree()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "claimFree(uint256)=1",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "claim()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "openFree()",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          },
+          {
+            "method": "mintFree(uint256,address)=(1,zero)",
+            "fresh_wallet": "revert",
+            "operator_wallet": "revert"
+          }
+        ]
+      },
+      "verdict": "Pantau",
+      "reasons": [
+        "No free mint/claim path passed value-0 simulation from the test address \u2014 that can mean there is no free path, the global quota is exhausted, or the path is identity-gated (e.g. requires an Agent ID) so simulations from a plain address always revert.",
+        "Contract is verified on Sourcify.",
+        "No DEX pair on BSC yet (DexScreener)."
+      ]
+    },
+    {
+      "address": "0x123",
+      "error": "RuntimeError: all RPCs failed for eth_getCode: {'code': -32602, 'message': 'invalid argument 0: json: cannot unmarshal hex string of odd length into Go value of type common.Address'}"
+    }
+  ],
+  "summary": [
+    {
+      "address": "0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0",
+      "name": "Moth Club",
+      "symbol": "MOTH",
+      "verified": true,
+      "free_path": true,
+      "verdict": "Layak"
+    },
+    {
+      "address": "0x8b8e59c014eb3e229e043ae8f3b0d7e201d21db0",
+      "name": "Kitebots",
+      "symbol": "KITE",
+      "verified": true,
+      "free_path": false,
+      "verdict": "Pantau"
+    },
+    {
+      "address": "0x123",
+      "name": null,
+      "symbol": null,
+      "verified": null,
+      "free_path": null,
+      "verdict": "ERROR",
+      "error": "RuntimeError: all RPCs failed for eth_getCode: {'code': -32602, 'message': 'invalid argument 0: json: cannot unmarshal hex string of odd length into Go value of type common.Address'}"
+    }
+  ]
+}

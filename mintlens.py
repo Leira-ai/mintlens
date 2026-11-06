@@ -333,10 +333,90 @@ def build_brief(address: str, use_cache: bool = True) -> dict:
     return brief
 
 
+def _summary_row(brief: dict) -> dict:
+    """Distil one brief (or one per-address error entry) into a table row."""
+    if "error" in brief:
+        return {
+            "address": brief["address"],
+            "name": None,
+            "symbol": None,
+            "verified": None,
+            "free_path": None,
+            "verdict": "ERROR",
+            "error": brief["error"],
+        }
+    contract = brief.get("contract") or {}
+    verification = brief.get("verification") or {}
+    free_paths = brief.get("free_paths") or {}
+    return {
+        "address": brief["address"],
+        "name": contract.get("name"),
+        "symbol": contract.get("symbol"),
+        "verified": verification.get("verified"),
+        "free_path": free_paths.get("has_free_path_signal"),
+        "verdict": brief.get("verdict"),
+    }
+
+
+def build_batch(addresses: list[str], use_cache: bool = True) -> dict:
+    """Brief several contracts sequentially, reusing build_brief's cache.
+
+    One bad address never kills the batch: its slot in ``briefs`` becomes
+    an ``{"address": ..., "error": ...}`` entry and the summary row shows
+    verdict ``ERROR`` with the reason.
+    """
+    briefs: list[dict] = []
+    for address in addresses:
+        try:
+            briefs.append(build_brief(address, use_cache=use_cache))
+        except Exception as exc:  # noqa: BLE001 - report inline, keep going
+            briefs.append(
+                {"address": address.strip(), "error": f"{type(exc).__name__}: {exc}"}
+            )
+    return {
+        "count": len(briefs),
+        "observed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "briefs": briefs,
+        "summary": [_summary_row(b) for b in briefs],
+    }
+
+
+def format_batch_summary(batch: dict) -> str:
+    """Render a batch result as a compact comparison table."""
+
+    def yn(value) -> str:
+        return "—" if value is None else ("yes" if value else "no")
+
+    errors = sum(1 for row in batch["summary"] if row["verdict"] == "ERROR")
+    lines = [
+        f"MintLens batch — {batch['count']} address(es), {errors} error(s) "
+        f"(observed_at {batch['observed_at']})",
+        f"{'#':<3} {'Address':<44} {'Name':<22} {'Symbol':<8} "
+        f"{'Verified':<9} {'Free path':<10} Verdict",
+    ]
+    for i, row in enumerate(batch["summary"], 1):
+        lines.append(
+            f"{i:<3} {row['address']:<44} {(row['name'] or '—'):<22} "
+            f"{(row['symbol'] or '—'):<8} {yn(row['verified']):<9} "
+            f"{yn(row['free_path']):<10} {row['verdict']}"
+        )
+        if row.get("error"):
+            lines.append(f"    error: {row['error']}")
+    return "\n".join(lines)
+
+
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) >= 3 and sys.argv[1] == "brief":
-        print(json.dumps(build_brief(sys.argv[2], use_cache="--fresh" not in sys.argv), indent=2))
+    argv = [a for a in sys.argv[1:] if a != "--fresh"]
+    use_cache = "--fresh" not in sys.argv
+    if len(argv) >= 2 and argv[0] == "brief":
+        print(json.dumps(build_brief(argv[1], use_cache=use_cache), indent=2))
+    elif len(argv) >= 2 and argv[0] == "batch":
+        batch = build_batch(argv[1:], use_cache=use_cache)
+        print(format_batch_summary(batch))
+        print("\n--- full briefs (JSON) ---")
+        print(json.dumps(batch, indent=2))
     else:
         print("usage: python mintlens.py brief <contract-address> [--fresh]")
+        print("       python mintlens.py batch <address> [<address> ...] [--fresh]")
