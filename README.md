@@ -233,17 +233,24 @@ FINDINGS #10 (`session_id` alone does not resume history; an explicit
 
 ## Demo video
 
-[mintlens-demo.mp4](mintlens-demo.mp4) (2 min 38 s, in this repo) — built
-from **real asciinema recordings** of the product running live, with English
-voice narration, styled subtitles, and an original music track mixed under
-the voice. Scenes: a live CLI brief of Moth Club ending in the **Worth it**
-verdict, a batch comparison (Moth Club **Worth it** vs Kitebots **Watch**),
-the cross-process memory demo (a second process with no address in its
-prompt recalling the first process's research from the shared thread), and
-a closing card on the 13 SDK findings. Waiting time inside the live runs is
-time-compressed in editing and labelled on screen; no output is retyped or
-mocked up. Segment list and production notes are in [DEMO.md](DEMO.md);
-the full narration script is in [DEMO-SCRIPT-v5.md](DEMO-SCRIPT-v5.md).
+[mintlens-demo.mp4](mintlens-demo.mp4) (2 min 31 s, 1920×1080, in this
+repo) — built from **real asciinema recordings** of the product running
+live, with English voice narration, styled subtitles, an original music
+track mixed under the voice, and motion design on top: animated cards,
+smooth zoom in/out and pans over the terminal footage, animated verdict
+highlights, and a segment progress indicator. Scenes: a live CLI brief of
+Moth Club ending in the **Worth it** verdict, a batch comparison (Moth
+Club **Worth it** vs Kitebots **Watch**), an explanatory card for the
+cross-process memory workflow (six live re-recording attempts on
+2026-11-06 were blocked by the OpenMinion runtime's freshness verifier;
+the genuine earlier transcript ships in
+[examples/memory-demo-transcript.txt](examples/memory-demo-transcript.txt)
+and the workflow replays via `python memory_demo.py`), and a closing card
+on the 13 SDK findings. Waiting time inside the live runs is
+time-compressed in editing and labelled on screen; no output is retyped
+or mocked up. Segment list and production notes are in [DEMO.md](DEMO.md);
+the full narration script and scene provenance are in
+[DEMO-SCRIPT-v6.md](DEMO-SCRIPT-v6.md).
 
 ## Safety & Constraints
 
