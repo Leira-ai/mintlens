@@ -16,6 +16,33 @@ MintLens is a miniature of a production verification pipeline used to screen
 Agent-ID free mints: it never signs, never sends a transaction, and treats a
 passing simulation as a *signal*, never as proof.
 
+## Run it in 2 minutes
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# 1) Deterministic brief — no API key, no model needed:
+python mintlens.py brief 0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0
+#    → Moth Club brief, verdict "Layak"
+#      (sample output: examples/sample-brief-moth-club.json)
+
+# 2) End-to-end smoke test of the same pipeline (asserts structure + verdict):
+python smoke_test.py
+
+# 3) Optional — the model-backed agent (needs a provider config + key):
+openminion config init --provider openai   # creates .openminion/agents.json
+cp .env.example .env                       # then put your key in .env
+set -a; source .env; set +a
+python agent.py "Research this BSC contract: 0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0"
+```
+
+No key handy? `python agent.py "Research 0x…"` still runs: it prints that
+the model layer is skipped and serves the deterministic brief instead of
+crashing. Key sources (env var, or a local key file) are documented in
+[.env.example](.env.example); provider/model setup details are in the
+Quickstart section below.
+
 ## How it works
 
 ```
