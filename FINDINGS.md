@@ -182,3 +182,20 @@ Handoff (planned next), typed `output_type` briefs.
 - Read-only permission profile: confirm non-allowlisted tools (blockchain signing, SSH) are unreachable from the agent's tool surface.
 - Typed output for the brief schema; diagnostics/status commands.
 - Subagent / Handoff building blocks with a second specialised agent.
+
+## Update 2026-11-06 — verdict labels renamed to English
+
+The verdict labels were originally Indonesian (Layak / Pantau / Hindari,
+used in the dated entries above, which are kept as written). At the
+operator's request the program's user-facing output is now English-only:
+the labels are **Worth it** / **Watch** / **Avoid** (constants
+`VERDICT_WORTH_IT` / `VERDICT_WATCH` / `VERDICT_AVOID` in mintlens.py).
+The deterministic example outputs (`sample-brief-moth-club.json`,
+`runtime-proof-moth-club.txt`, `batch-output.txt`) were regenerated live
+after the rename, and the smoke test asserts the Moth Club ground-truth
+verdict as "Worth it" (15/15, live brief). The cross-process memory
+transcript is kept as its original capture: re-running `memory_demo.py`
+that evening hit the runtime freshness verifier blocking the agent's
+answers (4/4 attempts, both ground-truth contracts, cached and live
+briefs alike — the same verifier behaviour as #11, and a reminder that
+it is model/verifier-state dependent, not deterministic).

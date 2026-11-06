@@ -5,7 +5,7 @@ structure and verdict against ground truth established during the build:
 
     Moth Club (MOTH) 0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0
     — Sourcify-verified, ungated free mint (the fresh-address probe
-    passes), verdict "Layak" (FINDINGS, 2026-11-06 live tests).
+    passes), verdict "Worth it" (FINDINGS, 2026-11-06 live tests).
 
 Needs no API key and no model — only public BSC RPCs, Sourcify, and
 DexScreener. Uses the 6-hour local cache when a fresh entry is present;
@@ -19,7 +19,7 @@ import sys
 import mintlens
 
 ADDRESS = "0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0"
-EXPECTED_VERDICT = "Layak"
+EXPECTED_VERDICT = "Worth it"
 
 _checks = 0
 

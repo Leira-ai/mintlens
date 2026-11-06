@@ -7,8 +7,7 @@ Cortensor Hackathon #5.
 Give MintLens a BSC contract address and it returns a grounded research brief:
 what the contract is, whether its source is verified, whether a free
 mint/claim path appears reachable, whether a market exists yet — and a
-calibrated verdict (**Layak** / **Pantau** / **Hindari** — roughly
-*worth it* / *watch* / *avoid*). Every fact in the brief comes from a live
+calibrated verdict (**Worth it** / **Watch** / **Avoid**). Every fact in the brief comes from a live
 read-only check; the language model only orchestrates the tools and narrates
 their output.
 
@@ -24,7 +23,7 @@ pip install -r requirements.txt
 
 # 1) Deterministic brief — no API key, no model needed:
 python mintlens.py brief 0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0
-#    → Moth Club brief, verdict "Layak"
+#    → Moth Club brief, verdict "Worth it"
 #      (sample output: examples/sample-brief-moth-club.json)
 
 # 2) End-to-end smoke test of the same pipeline (asserts structure + verdict):
@@ -60,7 +59,7 @@ flowchart TD
     VER --> VERDICT
     PROBE --> VERDICT
     MKT --> VERDICT
-    VERDICT["Deterministic verdict — Layak / Pantau / Hindari + reasons (observed_at-stamped)"]
+    VERDICT["Deterministic verdict — Worth it / Watch / Avoid + reasons (observed_at-stamped)"]
     VERDICT --> OUT["Research brief (JSON) — narrated by the agent when the model layer runs"]
 ```
 
@@ -93,10 +92,10 @@ back empty.
 
 Verdict rules (deterministic, in `build_brief`):
 
-- **Layak** — a free path passes simulation *and* the source is verified.
-- **Pantau** — any single positive signal (verified source, a market, or a
+- **Worth it** — a free path passes simulation *and* the source is verified.
+- **Watch** — any single positive signal (verified source, a market, or a
   free-path signal) without the full combination.
-- **Hindari** — no code at the address, or no positive signal at all.
+- **Avoid** — no code at the address, or no positive signal at all.
 
 Briefs are cached locally for 6 hours (`.mintlens_cache.json`) so repeated
 questions don't re-hammer public RPCs.
@@ -153,7 +152,7 @@ python agent.py "Which contract did I just ask about, and what was the verdict?"
 Expected output for the example contract (Kitebots, an Agent-ID-gated NFT
 collection the operator had already minted): identity read on-chain, Sourcify
 *exact match*, no free path detected from a plain address (the gate is
-identity-based — the brief says so), no DEX pair yet, verdict **Pantau**.
+identity-based — the brief says so), no DEX pair yet, verdict **Watch**.
 
 ## Example run (real model, Gemini 3.1 Flash Lite)
 
@@ -162,7 +161,7 @@ identity-based — the brief says so), no DEX pair yet, verdict **Pantau**.
 > **Free-mint path signal:** none detected — all value-0 simulations reverted
 > from the test address; the path may be identity-gated
 > **Market:** no BSC pair on DexScreener
-> **Verdict: Pantau**
+> **Verdict: Watch**
 
 A second process then answered "which contract did I ask about, and what was
 the verdict?" correctly from thread history alone.
@@ -188,7 +187,7 @@ Excerpt of the output (fields trimmed; full transcript in
   "verification": { "verified": true, "match": "exact_match", "name": "MothClub" },
   "free_paths": { "has_free_path_signal": true, "methods_ok": ["mint(uint256)=1"],
                   "operator_wallet_methods_ok": [] },
-  "verdict": "Layak"
+  "verdict": "Worth it"
 }
 ```
 
@@ -201,7 +200,7 @@ make. The same brief as structured JSON is in
 Replay / verification: [smoke_test.py](smoke_test.py) re-runs this pipeline
 and asserts the brief's structure and verdict against ground truth —
 **15/15 checks pass, exit code 0** (`SMOKE TEST PASSED — 15 checks, verdict
-'Layak'`; pass `--fresh` to force live reads instead of the cache).
+'Worth it'`; pass `--fresh` to force live reads instead of the cache).
 
 ## Batch briefs and cross-process memory
 
@@ -220,7 +219,7 @@ never kills the batch: its slot becomes an inline error entry and its
 table row shows `ERROR` with the reason. Real run (two ground-truth
 contracts + one malformed address):
 [examples/batch-output.txt](examples/batch-output.txt) — Moth Club →
-**Layak**, Kitebots → **Pantau**, `0x123` → inline error, batch completes.
+**Worth it**, Kitebots → **Watch**, `0x123` → inline error, batch completes.
 
 **Cross-process memory** — `python memory_demo.py` runs `agent.py` twice
 as two separate OS processes that share only the OpenMinion thread
@@ -237,8 +236,8 @@ FINDINGS #10 (`session_id` alone does not resume history; an explicit
 [mintlens-demo.mp4](mintlens-demo.mp4) (2 min 38 s, in this repo) — built
 from **real asciinema recordings** of the product running live, with English
 voice narration, styled subtitles, and an original music track mixed under
-the voice. Scenes: a live CLI brief of Moth Club ending in the **Layak**
-verdict, a batch comparison (Moth Club **Layak** vs Kitebots **Pantau**),
+the voice. Scenes: a live CLI brief of Moth Club ending in the **Worth it**
+verdict, a batch comparison (Moth Club **Worth it** vs Kitebots **Watch**),
 the cross-process memory demo (a second process with no address in its
 prompt recalling the first process's research from the shared thread), and
 a closing card on the 13 SDK findings. Waiting time inside the live runs is

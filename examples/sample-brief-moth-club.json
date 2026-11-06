@@ -1,14 +1,14 @@
 {
   "address": "0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0",
-  "checked_at": "2026-11-06T06:56:44Z",
-  "observed_at": "2026-11-06T06:56:44Z",
+  "checked_at": "2026-11-06T10:06:40Z",
+  "observed_at": "2026-11-06T10:06:40Z",
   "contract": {
     "has_code": true,
     "code_bytes": 7398,
     "name": "Moth Club",
     "symbol": "MOTH",
     "decimals": null,
-    "total_supply_raw": 408,
+    "total_supply_raw": 415,
     "owner": "0x293fc9e12e5db954aad233f659284f5fb5c970be"
   },
   "from_cache": false,
@@ -70,7 +70,7 @@
       }
     ]
   },
-  "verdict": "Layak",
+  "verdict": "Worth it",
   "reasons": [
     "Value-0 simulation from a fresh address passed for: mint(uint256)=1 (free-path signal \u2014 not proof; the full gate still applies).",
     "The operator wallet did NOT pass simulation \u2014 its free quota is likely spent or blocked by another condition.",

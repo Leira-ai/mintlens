@@ -256,6 +256,13 @@ def _save_cache(cache: dict) -> None:
         pass
 
 
+# Verdict labels — English only (the program's user-facing output is
+# English; labels renamed from the original Indonesian on 2026-11-06).
+VERDICT_WORTH_IT = "Worth it"
+VERDICT_WATCH = "Watch"
+VERDICT_AVOID = "Avoid"
+
+
 def build_brief(address: str, use_cache: bool = True) -> dict:
     """Compose the full research brief for one contract address."""
     address = address.strip()
@@ -275,7 +282,7 @@ def build_brief(address: str, use_cache: bool = True) -> dict:
         "from_cache": False,
     }
     if not contract.get("has_code"):
-        brief["verdict"] = "Hindari"
+        brief["verdict"] = VERDICT_AVOID
         brief["reasons"] = ["Address has no contract bytecode on BSC (EOA or wrong address)."]
         cache[key] = {"ts": time.time(), "brief": brief}
         _save_cache(cache)
@@ -318,13 +325,13 @@ def build_brief(address: str, use_cache: bool = True) -> dict:
         reasons.append("No DEX pair on BSC yet (DexScreener).")
 
     if free_signal and verified:
-        verdict = "Layak"
+        verdict = VERDICT_WORTH_IT
     elif free_signal or has_market or verified:
-        # A verified contract (or a traded token) is never "Hindari" just because
+        # A verified contract (or a traded token) is never "Avoid" just because
         # the generic probe found no free path — the path may be identity-gated.
-        verdict = "Pantau"
+        verdict = VERDICT_WATCH
     else:
-        verdict = "Hindari"
+        verdict = VERDICT_AVOID
     brief["verdict"] = verdict
     brief["reasons"] = reasons
 

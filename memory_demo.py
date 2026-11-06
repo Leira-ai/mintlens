@@ -34,7 +34,7 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 
-MOTH_CLUB = "0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0"  # ground truth: Layak
+MOTH_CLUB = "0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0"  # ground truth: Worth it
 STEP1_PROMPT = f"Research this BSC contract: {MOTH_CLUB}"
 STEP2_PROMPT = (
     "For the contract you just researched in this conversation, what was "
@@ -71,7 +71,7 @@ def main() -> int:
     print("\n===== DEMO DONE =====")
     print(f"process 1 exit={rc1}, process 2 exit={rc2}")
     print("Read process 2's answer above: it names the Moth Club contract,")
-    print("its verdict ('Layak') and the free-path result — none of which")
+    print("its verdict ('Worth it') and the free-path result — none of which")
     print("appear in process 2's prompt. They came from the thread history.")
     return 0 if rc1 == 0 and rc2 == 0 else 1
 

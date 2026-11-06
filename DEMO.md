@@ -15,8 +15,8 @@ retained by the author as provenance for every scene.
 | # | Segment | What it shows |
 |---|---------|---------------|
 | 1 | Hook / title | MintLens — know before you mint: a read-only BSC free-mint research agent on the OpenMinion SDK, Cortensor Hackathon #5 |
-| 2 | Live CLI brief | `python mintlens.py brief 0x48c3…91c8 --fresh` recorded live — identity, Sourcify verification, dual-perspective free-path probe, market check; verdict **Layak** for Moth Club |
-| 3 | Batch comparison | `python mintlens.py batch …` — Moth Club **Layak** vs Kitebots **Pantau** side by side, with the evidence for each verdict |
+| 2 | Live CLI brief | `python mintlens.py brief 0x48c3…91c8 --fresh` recorded live — identity, Sourcify verification, dual-perspective free-path probe, market check; verdict **Worth it** for Moth Club |
+| 3 | Batch comparison | `python mintlens.py batch …` — Moth Club **Worth it** vs Kitebots **Watch** side by side, with the evidence for each verdict |
 | 4 | Agent + memory | `memory_demo.py`: one process researches Moth Club; a second, separate process whose prompt contains no address recalls the contract and verdict from the shared `thread_id` (FINDINGS #10) |
 | 5 | Findings close | 13 documented SDK findings, including the NO_PROXY bug (FINDINGS #12) and its fix with regression tests |
 | 6 | End card | Read-only. Deterministic. Grounded. Repo: github.com/Leira-ai/mintlens |
