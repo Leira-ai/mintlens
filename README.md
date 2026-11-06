@@ -234,13 +234,17 @@ FINDINGS #10 (`session_id` alone does not resume history; an explicit
 
 ## Demo video
 
-[mintlens-demo.mp4](mintlens-demo.mp4) (73 seconds, in this repo) — a
-walkthrough of the real product: getting set up with a model provider, the
-deterministic CLI brief, a real model-backed agent run whose verdict matches
-the CLI, how to read the verdict, and a second process recalling the first
-one's research from thread history. Segment list and production notes are in
-[DEMO.md](DEMO.md). Every terminal excerpt in the video is from an actual
-2026-11-06 run.
+[mintlens-demo.mp4](mintlens-demo.mp4) (2 min 38 s, in this repo) — built
+from **real asciinema recordings** of the product running live, with English
+voice narration, styled subtitles, and an original music track mixed under
+the voice. Scenes: a live CLI brief of Moth Club ending in the **Layak**
+verdict, a batch comparison (Moth Club **Layak** vs Kitebots **Pantau**),
+the cross-process memory demo (a second process with no address in its
+prompt recalling the first process's research from the shared thread), and
+a closing card on the 13 SDK findings. Waiting time inside the live runs is
+time-compressed in editing and labelled on screen; no output is retyped or
+mocked up. Segment list and production notes are in [DEMO.md](DEMO.md);
+the full narration script is in [DEMO-SCRIPT-v5.md](DEMO-SCRIPT-v5.md).
 
 ## Safety & Constraints
 

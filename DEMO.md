@@ -1,31 +1,35 @@
 # MintLens — demo video
 
-Final video: **`mintlens-demo.mp4`** — 73 seconds, full English, a product
-walkthrough (how to access it → how to use it → what the result means) with
-styled subtitles and an instrumental music track. All terminal excerpts are
-from real runs on 2026-11-06, excerpted for length; nothing is mocked up.
+Final video: **`mintlens-demo.mp4`** — 2 min 38 s, 1280×720, full English.
+Built from **real asciinema recordings** of the product actually running in
+a terminal — no simulated typing, no retyped output — with English voice
+narration, styled subtitles, and an original instrumental music track
+(`music_bgm.py`) mixed under the voice. Waiting time inside the live runs
+is time-compressed in editing and labelled on screen
+("LIVE RUN — waiting time compressed"); everything shown is the actual
+output the terminal produced, in the order it produced it. The full
+narration script and production notes are in
+[DEMO-SCRIPT-v5.md](DEMO-SCRIPT-v5.md); the raw `.cast` recordings are
+retained by the author as provenance for every scene.
 
 | # | Segment | What it shows |
 |---|---------|---------------|
-| 1 | Title | MintLens — a read-only BSC free-mint research agent, built on the OpenMinion SDK · Cortensor Hackathon #5 |
-| 2 | Getting set up | Provider configuration: how the agent gets a real model (echo for plumbing → Gemini via Google's OpenAI-compatible endpoint) |
-| 3 | Usage — CLI brief | `python mintlens.py brief 0x8b8e…1db0` — five deterministic checks, no model; verdict Pantau for Kitebots |
-| 4 | Usage — AI agent | `python agent.py "Research this BSC contract: …"` — the agent calls its own research tool and answers from the tool output; verdict matches the CLI |
-| 5 | The result | How to read the verdict: Layak (worth it) / Pantau (monitor) / Hindari (avoid), and why an Agent-ID-gated path is reported "not detected", never "does not exist" |
-| 6 | The agent remembers | A new process with the same explicit `thread_id` recalls the earlier contract and verdict (finding #10) |
-| 7 | Behind the scenes | Building blocks used (Agent facade, `@tool` policy annotations, providers, thread sessions, `observed_at` evidence); signing and SSH modules deliberately NOT enabled |
-| 8 | Close | Read-only. Deterministic. Grounded. Full code + README + findings in this repo |
+| 1 | Hook / title | MintLens — know before you mint: a read-only BSC free-mint research agent on the OpenMinion SDK, Cortensor Hackathon #5 |
+| 2 | Live CLI brief | `python mintlens.py brief 0x48c3…91c8 --fresh` recorded live — identity, Sourcify verification, dual-perspective free-path probe, market check; verdict **Layak** for Moth Club |
+| 3 | Batch comparison | `python mintlens.py batch …` — Moth Club **Layak** vs Kitebots **Pantau** side by side, with the evidence for each verdict |
+| 4 | Agent + memory | `memory_demo.py`: one process researches Moth Club; a second, separate process whose prompt contains no address recalls the contract and verdict from the shared `thread_id` (FINDINGS #10) |
+| 5 | Findings close | 13 documented SDK findings, including the NO_PROXY bug (FINDINGS #12) and its fix with regression tests |
+| 6 | End card | Read-only. Deterministic. Grounded. Repo: github.com/Leira-ai/mintlens |
 
 ## Production notes
 
-- Rendered by `render_demo2.py` (Pillow + ffmpeg): typed terminal animation
-  from the real run outputs, styled subtitle bar, fade transitions between
-  segments.
-- Soundtrack composed by `music_bgm.py` (numpy synthesis, Karplus-Strong
-  plucked melody in A-minor pentatonic over an Am–F–C–G progression at
-  100 BPM, with bass, pads and soft offbeat hats). Measured loudness:
-  −16.0 dB mean / −0.4 dB peak — clearly audible under the visuals.
-  (Earlier drafts used a sine-pad drone that measured −39.9 dB at v2 and
-  −27.3 dB at v3; the composed track replaced it.)
-- Re-render: `python render_demo2.py mintlens-demo.mp4` from the project
-  venv (system `python3` is used for the BGM step, which needs numpy).
+- Terminal footage: asciinema `.cast` recordings of real 2026-11-06 runs
+  (live brief, batch, memory demo), rendered through a terminal emulator;
+  idle gaps capped in editing, output untouched — including genuine
+  artefacts of the raw JSON output.
+- Narration: English TTS voice-over following the script in
+  DEMO-SCRIPT-v5.md, with styled subtitles throughout.
+- Soundtrack: original composition by `music_bgm.py` (numpy synthesis),
+  mixed low under the narration.
+- This video (v5) replaces the earlier program-rendered walkthrough; the
+  current file is the one to review.
