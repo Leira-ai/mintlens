@@ -1,0 +1,34 @@
+MintLens memory demo — two separate agent.py processes, one
+shared OpenMinion thread (thread_id='mintlens-en', set in agent.py).
+
+===== PROCESS 1 — research (tool call, address in prompt) =====
+$ python agent.py "Research this BSC contract: 0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0"
+(started 2026-11-06T07:20:43Z)
+openminion: The research for the BSC contract **0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0** is complete. Here are the findings:
+
+*   **Identity:** Moth Club (Symbol: MOTH)
+*   **Sourcify Verification:** Verified (Exact Match)
+*   **Free-mint Path Signal:** Positive. Value-0 simulation from a fresh address passed for the `mint(uint256)=1` method. Note: This is a signal, not proof of eligibility, as specific minting gates may still apply.
+*   **Market Status:** No DEX pair found on BSC (DexScreener).
+*   **Verdict:** Layak (Qualified)
+
+**Reasons:**
+*   Value-0 simulation from a fresh address passed for: `mint(uint256)=1`.
+*   The contract is verified on Sourcify.
+*   No DEX pair is currently available on BSC.
+*   The operator wallet did NOT pass simulation, suggesting its free quota is likely spent or restricted by other conditions.
+(exit code 0)
+
+===== PROCESS 2 — recall (new process, NO address in prompt) =====
+$ python agent.py "For the contract you just researched in this conversation, what was the verdict, and did a free mint path exist? Answer from our conversation history — do not research a new contract."
+(started 2026-11-06T07:21:12Z)
+openminion: For the last contract I researched, **0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0** (Moth Club), the verdict was **"Layak" (Qualified)**.
+
+A free-mint path signal **did exist**, as the `mint(uint256)=1` method passed a value-0 simulation from a fresh address.
+(exit code 0)
+
+===== DEMO DONE =====
+process 1 exit=0, process 2 exit=0
+Read process 2's answer above: it names the Moth Club contract,
+its verdict ('Layak') and the free-path result — none of which
+appear in process 2's prompt. They came from the thread history.
