@@ -1,0 +1,13 @@
+# MintLens — pinned direct dependencies (versions as installed in the
+# project venv, openminion 0.1.18 era). Transitive dependencies are
+# resolved by pip from these.
+#
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+
+openminion==0.1.18      # SDK: Agent facade + @tool (agent.py)
+requests==2.34.2        # public RPC / Sourcify / DexScreener reads (mintlens.py)
+pycryptodome==4.3.0     # keccak-256 function selectors (mintlens.py)
+
+# Demo-video renderers only (render_demo*.py, not needed to run MintLens):
+# pillow==13.0.0
