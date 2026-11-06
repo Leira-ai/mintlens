@@ -43,6 +43,27 @@ crashing. Key sources (env var, or a local key file) are documented in
 [.env.example](.env.example); provider/model setup details are in the
 Quickstart section below.
 
+## Architecture
+
+```mermaid
+flowchart TD
+    U["User prompt with a BSC contract address"] --> AGENT
+    CLI["CLI: python mintlens.py brief ADDRESS"] --> CORE
+    AGENT["OpenMinion agent (agent.py) — three READ_ONLY tools; address prompts routed to research_contract"] --> CORE
+    AGENT -.->|"no model key: layer skipped with a notice, brief served directly"| CORE
+    CORE["mintlens.build_brief — deterministic core (6 h local cache)"]
+    CORE --> ID["Identity — eth_getCode + eth_call (name / symbol / supply / owner) via public BSC RPCs"]
+    CORE --> VER["Verification — Sourcify v2 (match level + contract name)"]
+    CORE --> PROBE["Free-path probe — value-0 eth_call simulation of 8 mint/claim methods, from a fresh address AND the operator wallet"]
+    CORE --> MKT["Market — DexScreener (best BSC pair, price, liquidity)"]
+    ID --> VERDICT
+    VER --> VERDICT
+    PROBE --> VERDICT
+    MKT --> VERDICT
+    VERDICT["Deterministic verdict — Layak / Pantau / Hindari + reasons (observed_at-stamped)"]
+    VERDICT --> OUT["Research brief (JSON) — narrated by the agent when the model layer runs"]
+```
+
 ## How it works
 
 ```
@@ -146,6 +167,42 @@ identity-based — the brief says so), no DEX pair yet, verdict **Pantau**.
 A second process then answered "which contract did I ask about, and what was
 the verdict?" correctly from thread history alone.
 
+## Runtime Proof
+
+A real, unedited run of the deterministic pipeline (fresh reads, no cache),
+captured 2026-11-06 for Moth Club — the ground-truth contract used by the
+smoke test:
+
+```bash
+$ python mintlens.py brief 0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0 --fresh
+```
+
+Excerpt of the output (fields trimmed; full transcript in
+[examples/runtime-proof-moth-club.txt](examples/runtime-proof-moth-club.txt)):
+
+```json
+{
+  "address": "0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0",
+  "checked_at": "2026-11-06T07:16:21Z",
+  "contract": { "name": "Moth Club", "symbol": "MOTH", "total_supply_raw": 408 },
+  "verification": { "verified": true, "match": "exact_match", "name": "MothClub" },
+  "free_paths": { "has_free_path_signal": true, "methods_ok": ["mint(uint256)=1"],
+                  "operator_wallet_methods_ok": [] },
+  "verdict": "Layak"
+}
+```
+
+Note the dual-perspective result: the free path passes from a fresh address
+but not from the operator wallet — this wallet's free quota is already spent
+(it minted earlier), which is exactly the distinction the probe exists to
+make. The same brief as structured JSON is in
+[examples/sample-brief-moth-club.json](examples/sample-brief-moth-club.json).
+
+Replay / verification: [smoke_test.py](smoke_test.py) re-runs this pipeline
+and asserts the brief's structure and verdict against ground truth —
+**15/15 checks pass, exit code 0** (`SMOKE TEST PASSED — 15 checks, verdict
+'Layak'`; pass `--fresh` to force live reads instead of the cache).
+
 ## Demo video
 
 [mintlens-demo.mp4](mintlens-demo.mp4) (73 seconds, in this repo) — a
@@ -156,19 +213,52 @@ one's research from thread history. Segment list and production notes are in
 [DEMO.md](DEMO.md). Every terminal excerpt in the video is from an actual
 2026-11-06 run.
 
-## Safety posture
+## Safety & Constraints
 
-- Read-only by construction: `eth_call` simulations and public GETs only.
-- The agent's system prompt forbids inventing data and forbids suggesting it
-  can transact; the verdict logic is deterministic code, not model opinion.
-- No API keys or wallet material in this repo; provider keys are supplied via
-  environment at run time.
+MintLens is a research tool with a hard read-only boundary. Explicitly:
+
+- **It refuses to sign anything.** There is no private-key handling and no
+  signing code path anywhere in `mintlens.py` or `agent.py`; no key is ever
+  loaded for transaction purposes.
+- **It never sends a transaction.** The only chain access is `eth_call` /
+  `eth_getCode` JSON-RPC and HTTPS GETs to the Sourcify and DexScreener
+  public APIs. Every simulation is a value-0 `eth_call` — the "from"
+  address is just a field on a read, and no funds can move.
+- **It never approves, sets allowances, or writes to a wallet.** No
+  `approve`-style call exists in the codebase; the operator address appears
+  only as a simulation sender so the probe can tell "no free path" apart
+  from "this wallet's quota is spent".
+- **Its tools are policy-scoped read-only.** All three agent tools are
+  declared `@tool(min_scope="READ_ONLY", idempotent=True)`, and the agent is
+  constructed with exactly those three tools — nothing else.
+- **The SDK's signing and SSH tools are not enabled.** They exist in the
+  OpenMinion runtime, but MintLens runs a read-only profile and never wires
+  them in.
+- **Keys stay local.** The model provider key is read from an environment
+  variable or a local file (`.openminion/gemini.key`, gitignored); it is
+  loaded into the process environment only, never printed, logged, or
+  committed. `.env`, `*.key`, and `.openminion/` are all in `.gitignore`.
+- **The model cannot invent or transact.** The system prompt requires the
+  agent to base answers strictly on tool output and forbids suggesting it
+  can send a transaction; the verdict itself is deterministic code in
+  `build_brief`, not model opinion. A passing simulation is reported as a
+  *signal*, never as proof that a mint would succeed.
 
 ## Findings
 
 Building-block notes, rough edges, and feedback for the OpenMinion team are
 in [FINDINGS.md](FINDINGS.md) — 13 numbered findings from building and
 running MintLens, including the ones referenced above.
+
+## How this maps to the Hackathon #5 rubric
+
+| Criterion | Weight | Where it is satisfied in this repo |
+|---|---|---|
+| Working functionality | 25% | The deterministic brief pipeline (`mintlens.build_brief`) running live end-to-end — see the Runtime Proof section above and [examples/runtime-proof-moth-club.txt](examples/runtime-proof-moth-club.txt); the demo video (`mintlens-demo.mp4`, [DEMO.md](DEMO.md)); ground-truth contracts exercised in the smoke test |
+| OpenMinion SDK usage | 20% | [agent.py](agent.py): `Agent` facade, three `@tool` functions with policy annotations, pluggable provider config, explicit `thread_id` sessions, `observed_at` freshness stamps — inventoried in "OpenMinion building blocks used" above |
+| Reproducibility & demo quality | 20% | "Run it in 2 minutes" quickstart; pinned [requirements.txt](requirements.txt); [.env.example](.env.example); the no-key fallback in `agent.py`; [smoke_test.py](smoke_test.py) as a replay check (15/15, exit 0); [examples/sample-brief-moth-club.json](examples/sample-brief-moth-club.json) |
+| Building-block findings / SDK feedback | 25% | [FINDINGS.md](FINDINGS.md) — 13 numbered findings from building and running on the SDK, including the ones referenced throughout this README |
+| Relevance | 10% | The brief screens exactly the problem this track is about — BSC free-mint / Agent-ID-gated opportunities — as a miniature of a production verification pipeline; scope and blind spots stated plainly in the Limitations section below |
 
 ## Limitations (honest list)
 
