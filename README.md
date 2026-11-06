@@ -203,6 +203,35 @@ and asserts the brief's structure and verdict against ground truth —
 **15/15 checks pass, exit code 0** (`SMOKE TEST PASSED — 15 checks, verdict
 'Layak'`; pass `--fresh` to force live reads instead of the cache).
 
+## Batch briefs and cross-process memory
+
+Two workflows built on the same core, both with captured real output:
+
+**Batch mode** — brief several contracts in one run:
+
+```bash
+python mintlens.py batch 0x48c3ae8e8129efa9d20800ac8932d8b51f85c0f0 0x8b8e59c014eb3e229e043ae8f3b0d7e201d21db0
+```
+
+`build_batch` runs `build_brief` sequentially (reusing the 6 h cache) and
+prints a comparison table — name, symbol, verified?, free-path signal,
+verdict — followed by the full briefs as one JSON object. One bad address
+never kills the batch: its slot becomes an inline error entry and its
+table row shows `ERROR` with the reason. Real run (two ground-truth
+contracts + one malformed address):
+[examples/batch-output.txt](examples/batch-output.txt) — Moth Club →
+**Layak**, Kitebots → **Pantau**, `0x123` → inline error, batch completes.
+
+**Cross-process memory** — `python memory_demo.py` runs `agent.py` twice
+as two separate OS processes that share only the OpenMinion thread
+(`thread_id="mintlens-en"`). Process 1 researches Moth Club by address;
+process 2 — a new process whose prompt contains *no* address — is asked
+for the verdict and the free-path result, and answers both correctly
+from the thread history alone. This is the SDK behaviour behind
+FINDINGS #10 (`session_id` alone does not resume history; an explicit
+`thread_id` does), packaged as a replayable demo. Full transcript:
+[examples/memory-demo-transcript.txt](examples/memory-demo-transcript.txt).
+
 ## Demo video
 
 [mintlens-demo.mp4](mintlens-demo.mp4) (73 seconds, in this repo) — a
