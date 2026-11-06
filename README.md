@@ -236,12 +236,16 @@ FINDINGS #10 (`session_id` alone does not resume history; an explicit
 [mintlens-demo.mp4](mintlens-demo.mp4) (2 min 31 s, 1920×1080, in this
 repo) — built from **real asciinema recordings** of the product running
 live, with English voice narration, styled subtitles, an original music
-track mixed under the voice, and motion design on top: animated cards,
-smooth zoom in/out and pans over the terminal footage, animated verdict
-highlights, and a segment progress indicator. Scenes: a live CLI brief of
+track mixed under the voice, and motion design on top. The motion layer
+is built in **Remotion** (React + TypeScript): every entrance, camera
+move, and highlight runs on spring physics or bezier easing — a
+letter-by-letter wordmark, word-by-word headline reveals, staggered
+status chips, a spring camera push-in and eased pan over the terminal
+footage, self-drawing verdict highlights, staggered findings cards, and
+a segment progress indicator. Scenes: a live CLI brief of
 Moth Club ending in the **Worth it** verdict, a batch comparison (Moth
 Club **Worth it** vs Kitebots **Watch**), an explanatory card for the
-cross-process memory workflow (six live re-recording attempts on
+cross-process memory workflow (twelve live re-recording attempts on
 2026-11-06 were blocked by the OpenMinion runtime's freshness verifier;
 the genuine earlier transcript ships in
 [examples/memory-demo-transcript.txt](examples/memory-demo-transcript.txt)
@@ -250,7 +254,7 @@ on the 13 SDK findings. Waiting time inside the live runs is
 time-compressed in editing and labelled on screen; no output is retyped
 or mocked up. Segment list and production notes are in [DEMO.md](DEMO.md);
 the full narration script and scene provenance are in
-[DEMO-SCRIPT-v6.md](DEMO-SCRIPT-v6.md).
+[DEMO-SCRIPT-v7.md](DEMO-SCRIPT-v7.md).
 
 ## Safety & Constraints
 
