@@ -68,7 +68,7 @@ questions don't re-hammer public RPCs.
   `openai` provider slot (the SDK ships no native Gemini provider in
   0.1.18 — see FINDINGS #7). Any OpenAI-compatible provider works the same way.
 - **Sessions with explicit `thread_id`** — `agent.run(..., thread_id=
-  "mintlens-main")` resumes conversation history across processes;
+  "mintlens-en")` resumes conversation history across processes;
   `session_id` alone does not (FINDINGS #10).
 - **Freshness verification** — tool results are returned as structured dicts
   stamped with an `observed_at` timestamp, satisfying the runtime's
@@ -118,6 +118,16 @@ identity-based — the brief says so), no DEX pair yet, verdict **Pantau**.
 
 A second process then answered "which contract did I ask about, and what was
 the verdict?" correctly from thread history alone.
+
+## Demo video
+
+[mintlens-demo.mp4](mintlens-demo.mp4) (73 seconds, in this repo) — a
+walkthrough of the real product: getting set up with a model provider, the
+deterministic CLI brief, a real model-backed agent run whose verdict matches
+the CLI, how to read the verdict, and a second process recalling the first
+one's research from thread history. Segment list and production notes are in
+[DEMO.md](DEMO.md). Every terminal excerpt in the video is from an actual
+2026-11-06 run.
 
 ## Safety posture
 
