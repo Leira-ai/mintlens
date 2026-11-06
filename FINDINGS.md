@@ -115,6 +115,12 @@ Findings / rough edges:
     surfaces as a generic provider error. Sanitizing `NO_PROXY` to
     `localhost,127.0.0.1` for the agent process fixes it. The SDK could
     pre-validate proxy env vars and name the culprit in the error.
+    Reported upstream as
+    [issue #686](https://github.com/openminion/openminion/issues/686);
+    a fix with regression tests (retry construction with the bracketed
+    entries rewritten to unbracketed form, plus a warning that names the
+    variable and the rewritten entries) is open as
+    [PR #687](https://github.com/openminion/openminion/pull/687).
 
 Config note: default turn timeouts (chat 90 s / API 45 s) were too tight for a
 slow egress path + a reasoning model; raised in `.openminion/agents.json`
